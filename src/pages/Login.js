@@ -21,10 +21,10 @@ function Login() {
         throw new Error("Invalid username or password");
       }
 
-      const token = await response.text();
+      const data = await response.json(); // Assuming backend sends JSON with token
 
-      // Save JWT
-      localStorage.setItem("token", token);
+      // Save JWT token (adjust if your backend returns differently)
+      localStorage.setItem("token", data.token);
 
       alert("Login successful");
       window.location.href = "/products";

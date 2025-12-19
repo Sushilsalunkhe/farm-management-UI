@@ -1,3 +1,5 @@
+import axios from "axios";   // ✅ ADD THIS LINE
+
 const BASE_URL = "http://localhost:8080/api";
 
 const getAuthHeaders = () => {
@@ -9,31 +11,35 @@ const getAuthHeaders = () => {
   };
 };
 
+const handleResponse = async (response) => {
+  if (response.status === 401) {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+    return;
+  }
+  return response.json();
+};
+
 /* ================= PRODUCTS ================= */
 
 export const getProducts = async () => {
   const response = await fetch(`${BASE_URL}/products`, {
     headers: getAuthHeaders()
   });
-
-  if (!response.ok) {
-    throw new Error("Unauthorized or session expired");
-  }
-
-  return response.json();
+  return handleResponse(response);
 };
 
 export const addProduct = async (product) => {
-  const response = await fetch("http://localhost:8080/api/products", {
+  const response = await fetch(`${BASE_URL}/products`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(product)
   });
-  return response.json();
+  return handleResponse(response);
 };
 
 export const deleteProduct = async (id) => {
-  await fetch(`http://localhost:8080/api/products/${id}`, {
+  await fetch(`${BASE_URL}/products/${id}`, {
     method: "DELETE",
     headers: getAuthHeaders()
   });
@@ -45,21 +51,20 @@ export const getEmployees = async () => {
   const response = await fetch(`${BASE_URL}/employees`, {
     headers: getAuthHeaders()
   });
-
-  return response.json();
+  return handleResponse(response);
 };
 
 export const addEmployee = async (employee) => {
-  const response = await fetch("http://localhost:8080/api/employees", {
+  const response = await fetch(`${BASE_URL}/employees`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(employee)
   });
-  return response.json();
+  return handleResponse(response);
 };
 
 export const deleteEmployee = async (id) => {
-  await fetch(`http://localhost:8080/api/employees/${id}`, {
+  await fetch(`${BASE_URL}/employees/${id}`, {
     method: "DELETE",
     headers: getAuthHeaders()
   });
@@ -68,11 +73,27 @@ export const deleteEmployee = async (id) => {
 /* ================= ORDERS ================= */
 
 export const placeOrder = async (order) => {
-  const response = await fetch("http://localhost:8080/api/orders", {
+  const response = await fetch(`${BASE_URL}/orders`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(order)
   });
+  return handleResponse(response);
+};
 
-  return response.json();
+export const getMyOrders = async () => {
+  const response = await fetch(`${BASE_URL}/orders`, {
+    headers: getAuthHeaders()
+  });
+  return handleResponse(response);
+};
+
+/* ================= USERS ================= */
+
+export const registerUser = (data) => {
+  return axios.post(`${BASE_URL}/users/register`, data);
+};
+
+export const loginUser = (data) => {
+  return axios.post(`${BASE_URL}/auth/login`, data);
 };

@@ -1,12 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header";
-import Footer from "./components/Footer";
-
-import Home from "./pages/Home";
-import Products from "./pages/Products";
-import Cart from "./pages/Cart";
+import ProtectedRoute from "./routes/ProtectedRoute";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Cart from "./pages/Cart";
+import AdminProducts from "./pages/AdminProducts";
 
 function App() {
   return (
@@ -14,14 +13,33 @@ function App() {
       <Header />
 
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/cart" element={<Cart />} />
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/admin/products" element={<ProductAdmin />} />
-      </Routes>
+        <Route path="/register" element={<Register />} />
 
-      <Footer />
+        {/* USER Routes */}
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute allowedRoles={["USER"]}>
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN Routes */}
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminProducts />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Default */}
+        <Route path="*" element={<Login />} />
+      </Routes>
     </>
   );
 }

@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { getProducts, addProduct, deleteProduct } from "../services/api";
 
-function ProductAdmin() {
+function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
 
-  const load = () => getProducts().then(setProducts);
+  const load = async () => {
+    const data = await getProducts();
+    if (data) setProducts(data);
+  };
 
   useEffect(() => {
     load();
@@ -29,7 +32,7 @@ function ProductAdmin() {
 
       <hr />
 
-      {products.map(p => (
+      {products?.map(p => (
         <div key={p.id}>
           {p.name} - ₹{p.price}
           <button onClick={() => deleteProduct(p.id)}>Delete</button>
@@ -39,4 +42,4 @@ function ProductAdmin() {
   );
 }
 
-export default ProductAdmin;
+export default AdminProducts;
