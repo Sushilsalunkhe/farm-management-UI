@@ -2,11 +2,24 @@ import { useEffect, useState } from "react";
 import { getMyOrders } from "../services/api";
 
 function Orders() {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]);   // always array
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    getMyOrders().then(setOrders);
+    getMyOrders()
+      .then(data => {
+        setOrders(Array.isArray(data) ? data : []);
+      })
+      .catch(err => {
+        console.error(err);
+        setError("Failed to load orders");
+        setOrders([]);
+      });
   }, []);
+
+  if (error) {
+    return <p style={{ color: "red" }}>{error}</p>;
+  }
 
   return (
     <div>
@@ -14,9 +27,13 @@ function Orders() {
 
       {orders.length === 0 && <p>No orders found</p>}
 
-      {orders.map(o => (
-        <div key={o.id}>
-          <b>Order #{o.id}</b> – ₹{o.totalAmount}
+      {orders.map(order => (
+        <div
+          key={order.id}
+          style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}
+        >
+          <p><b>Order Id:</b> {order.id}</p>
+          <p><b>Total:</b> ₹{order.totalAmount}</p>
         </div>
       ))}
     </div>

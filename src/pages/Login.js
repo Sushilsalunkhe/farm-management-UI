@@ -21,12 +21,14 @@ function Login() {
         throw new Error("Invalid username or password");
       }
 
-      const data = await response.json(); // Assuming backend sends JSON with token
+      const data = await response.json();
 
-      // Save JWT token (adjust if your backend returns differently)
+      // ✅ REQUIRED: Save JWT
       localStorage.setItem("token", data.token);
 
-      alert("Login successful");
+      // (Optional) Save role if backend sends it
+      // localStorage.setItem("role", data.role);
+
       window.location.href = "/products";
 
     } catch (err) {
