@@ -1,5 +1,3 @@
-// src/services/api.js
-
 const BASE_URL = "http://localhost:8080/api";
 
 /* ================= AUTH HEADERS ================= */
@@ -22,25 +20,21 @@ const getAuthHeaders = () => {
 
 const handleResponse = async (response) => {
 
-  // 🔐 Unauthorized / Forbidden → logout
   if (response.status === 401 || response.status === 403) {
-    localStorage.removeItem("token");
+    localStorage.clear();
     window.location.href = "/login";
     return [];
   }
 
-  // ✅ No content
   if (response.status === 204) {
     return [];
   }
 
-  // ❌ Other API errors
   if (!response.ok) {
     const text = await response.text();
     throw new Error(text || "API Error");
   }
 
-  // ✅ Parse JSON only if present
   const contentType = response.headers.get("content-type");
   if (contentType && contentType.includes("application/json")) {
     return response.json();
@@ -49,32 +43,70 @@ const handleResponse = async (response) => {
   return [];
 };
 
-/* ================= PRODUCTS ================= */
+/* ================= AUTH ================= */
 
 /**
- * 🔹 Backend: @GetMapping("/api/products")
+ * 🔹 REGISTER
+ * Backend: POST /api/users/register
+ * Should return: { token, username, role }
  */
-export const getAllProducts = async () => {
+export const registerUser = async (data) => {
+  const response = await fetch(`${BASE_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const authData = await handleResponse(response);
+
+  // ✅ Auto-login after register
+  if (authData?.token) {
+    localStorage.setItem("token", authData.token);
+    localStorage.setItem("username", authData.username);
+    localStorage.setItem("role", authData.role);
+  }
+
+  return authData;
+};
+
+/**
+ * 🔹 LOGIN
+ * Backend: POST /api/auth/login
+ */
+export const loginUser = async (data) => {
+  const response = await fetch(`${BASE_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const authData = await handleResponse(response);
+
+  if (authData?.token) {
+    localStorage.setItem("token", authData.token);
+    localStorage.setItem("username", authData.username);
+    localStorage.setItem("role", authData.role);
+  }
+
+  return authData;
+};
+
+/* ================= PRODUCTS ================= */
+
+export const getProducts = async () => {
   const response = await fetch(`${BASE_URL}/products`, {
     headers: getAuthHeaders()
   });
   return handleResponse(response);
 };
 
-// Alias (for existing imports)
-export const getProducts = getAllProducts;
-
-/**
- * 🔹 Backend: @PostMapping("/api/products")
- * 🔹 Multipart upload (ADMIN)
- */
 export const addProductWithImage = async (formData) => {
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${BASE_URL}/products`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${token}` // ❌ do NOT set Content-Type
+      Authorization: `Bearer ${token}`
     },
     body: formData
   });
@@ -82,9 +114,6 @@ export const addProductWithImage = async (formData) => {
   return handleResponse(response);
 };
 
-/**
- * 🔹 Backend: @DeleteMapping("/api/products/{id}")
- */
 export const deleteProduct = async (id) => {
   const response = await fetch(`${BASE_URL}/products/${id}`, {
     method: "DELETE",
@@ -133,26 +162,6 @@ export const placeOrder = async (order) => {
 export const getMyOrders = async () => {
   const response = await fetch(`${BASE_URL}/orders/my`, {
     headers: getAuthHeaders()
-  });
-  return handleResponse(response);
-};
-
-/* ================= USERS ================= */
-
-export const registerUser = async (data) => {
-  const response = await fetch(`${BASE_URL}/users/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
-};
-
-export const loginUser = async (data) => {
-  const response = await fetch(`${BASE_URL}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
   });
   return handleResponse(response);
 };

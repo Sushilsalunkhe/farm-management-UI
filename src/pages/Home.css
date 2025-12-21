@@ -1,0 +1,43 @@
+.home-container {
+  height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  /* Animated gradient background */
+  background: linear-gradient(
+    -45deg,
+    #2e7d32,
+    #66bb6a,
+    #a5d6a7,
+    #81c784
+  );
+  background-size: 400% 400%;
+  animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.home-title {
+  font-size: 3rem;
+  color: #ffffff;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.home-subtitle {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #f1f8e9;
+}
