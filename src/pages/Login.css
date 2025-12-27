@@ -12,11 +12,11 @@
   position: relative;
 }
 
-/* DARK OVERLAY TEXT */
+/* OVERLAY */
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
   display: flex;
   flex-direction: column;
@@ -40,19 +40,33 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 60px;
+  padding: 70px;
+  animation: fadeIn 0.6s ease-in;
 }
 
 .login-right h2 {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  margin-bottom: 25px;
+  color: #666;
 }
 
 .login-right input {
   margin-bottom: 15px;
   padding: 12px;
   font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
+.login-right input:focus {
+  outline: none;
+  border-color: #2e7d32;
+}
+
+/* BUTTON */
 .login-right button {
   padding: 12px;
   font-size: 16px;
@@ -60,15 +74,48 @@
   color: white;
   border: none;
   cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
 }
 
 .login-right button:hover {
   background-color: #1b5e20;
 }
 
+.login-right button:disabled {
+  background-color: #9ccc9c;
+  cursor: not-allowed;
+}
+
+/* ERROR */
 .error {
   color: red;
   margin-bottom: 10px;
+}
+
+/* ERROR SHAKE ANIMATION */
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* FADE IN */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* MOBILE RESPONSIVE */
@@ -78,6 +125,10 @@
   }
 
   .login-left {
-    height: 40vh;
+    height: 35vh;
+  }
+
+  .login-right {
+    padding: 40px;
   }
 }
